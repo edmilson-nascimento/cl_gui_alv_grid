@@ -1,10 +1,10 @@
 # Relatório ALV CL_GUI_ALV_GRID #
 
 [![N|Solid](https://wiki.scn.sap.com/wiki/download/attachments/1710/ABAP%20Development.png?version=1&modificationDate=1446673897000&api=v2)](https://www.sap.com/brazil/developer.html)
-Existem varios exemplos e modelos diferente de usar a classe `CL_GUI_ALV_GRID` para exibir relatórios ALV. Sempre que a classe é utilizada, ela necessita de um `container` para que o ALV seja exibido. Ao inves de criar um container pra isso, eu preferi utilizar o próprio `container`, que é gerado quando se cria a tela `1000` em um relatório, que no caso, é a tela de seleção. Sim, eu ~~posso~~ vou utilizar o container na tela de seleção para exibir o ALV como eu aprendi com [Gerson Lívio](mailto:gerson@litsolutions.com.br).
+Existem vários exemplos e modelos diferente de usar a classe `CL_GUI_ALV_GRID` para exibir relatórios ALV. Sempre que a classe é utilizada, ela necessita de um `container` para que o ALV seja exibido. Ao invés de criar um container pra isso, eu preferi utilizar o próprio `container`, que é gerado quando se cria a tela `1000` em um relatório, que no caso, é a tela de seleção. Sim, eu ~~posso~~ vou utilizar o container na tela de seleção para exibir o ALV como eu aprendi com [Gerson Lívio](mailto:gerson@litsolutions.com.br).
 A funcionalidade de `SELECT ROWS`
 
-Para isso eu criei uma classe local basica `GCL_REPORT` com os seguintes métodos:
+Para isso eu criei uma classe local básica `GCL_REPORT` com os seguintes métodos:
 
 * public section
 	* search
@@ -46,7 +46,7 @@ method search .
   endmethod .                    "search
 ```
 #### generate_grid ####
-Apos a busca dos dados, nesta rotina será feita a criação do objeto `lo_grid` da classe `cl_gui_alv_grid`, a composição ~~estática~~ dinâmica do `fieldcat`, configuração de layout de saída, ordenção de campos, atribuição de eventos e **utilização do mesmo** `container` para exibição do relatório. As chamadas de métodos `private` serão exemplificadas na respectiva sessão.
+Apos a busca dos dados, nesta rotina será feita a criação do objeto `lo_grid` da classe `cl_gui_alv_grid`, a composição ~~estática~~ dinâmica do `fieldcat`, configuração de layout de saída, ordenação de campos, atribuição de eventos e **utilização do mesmo** `container` para exibição do relatório. As chamadas de métodos `private` serão exemplificadas na respectiva sessão.
 ```abap 
   method generate_grid .
 
@@ -142,7 +142,7 @@ Não foram implementados métodos para essa sessão.
 
 ### public private ###
 #### fieldcat ####
-Esse rotina é excelente para que seja criado o `fieldcat`. Eu julgo muito maçante e improdutivo a criação sendo feita de forma que sejam informados todos os campos da estrutura de saída. Desta forma que foi implementado, utiliza-se o método `describe_by_data` da classe standard `cl_abap_structdescr`, desde forma, o objeto retornado (no caso `lobj_stdesc`) tem acesso a todas as caracteristicas do campo e pode utilizar estas informações para que seja feita a criação do `fieldcat` de forma mais produtiva.
+Essa rotina é excelente para que seja criado o `fieldcat`. Eu julgo muito maçante e improdutivo a criação sendo feita de forma que sejam informados todos os campos da estrutura de saída. Desta forma que foi implementado, utiliza-se o método `describe_by_data` da classe standard `cl_abap_structdescr`, desde forma, o objeto retornado (no caso `lobj_stdesc`) tem acesso a todas as características do campo e pode utilizar estas informações para que seja feita a criação do `fieldcat` de forma mais produtiva.
 ```abap
   method fieldcat .
 
@@ -200,7 +200,36 @@ Esse rotina é excelente para que seja criado o `fieldcat`. Eu julgo muito maça
   endmethod .                    "fieldcat
 
 ```
+#### call_screen_default ####
+A importância desse método é 
 
+```abap
+  method call_screen_default.
+
+    data:
+      lt_excl type table of sy-ucomm .
+
+*   Retira os botões exec e save do pf-status da
+*   tela default 1000 apos chamada do relátorio
+    append  'CRET' to lt_excl.
+    append  'SPOS' to lt_excl.
+    append  'GET'  to lt_excl.
+
+    call function 'RS_SET_SELSCREEN_STATUS'
+      exporting
+        p_status  = sy-pfkey
+        p_program = sy-repid
+      tables
+        p_exclude = lt_excl.
+
+*   exibi relatório na tela default do report
+    call selection-screen 1000 .
+
+    free:
+      lt_excl .
+
+  endmethod.                    "call_screen_default
+```
 
 :+1:
 
