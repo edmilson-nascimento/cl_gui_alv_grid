@@ -45,6 +45,98 @@ method search .
 
   endmethod .                    "search
 ```
+#### generate_grid ####
+Apos a busca dos dados, nesta rotina será feita a criação do objeto `lo_grid` da classe `cl_gui_alv_grid`, a composição ~~estática~~ dinâmica do `fieldcat`, configuração de layout de saída, ordenção de campos, atribuição de eventos e **utilização do mesmo `container`** para exibição do relatório. As chamadas de métodos `private` serão exemplificadas na respectiva sessão.
+```abap 
+  method generate_grid .
+
+    data:
+      lt_fcat   type lvc_t_fcat,
+      lt_sort   type lvc_t_sort,
+      ls_sort   type lvc_s_sort,
+      ls_vari   type disvariant,
+      ls_layout type lvc_s_layo.
+
+    field-symbols:
+      <ls_fcat> type lvc_s_fcat.
+
+    if lo_grid is not initial.
+      lo_grid->free( ).
+      clear lo_grid.
+    endif.
+
+    create object lo_grid
+      exporting
+*       i_shellstyle      = 0
+*       i_lifetime        =
+        i_parent          = cl_gui_container=>default_screen
+*       i_appl_events     = space
+*       i_parentdbg       =
+*       i_applogparent    =
+*       i_graphicsparent  =
+*       i_name            =
+*       i_fcat_complete   = space
+      exceptions
+        error_cntl_create = 1
+        error_cntl_init   = 2
+        error_cntl_link   = 3
+        error_dp_create   = 4
+        others            = 5 .
+
+    if sy-subrc ne 0 .
+*     message id sy-msgid type sy-msgty number sy-msgno
+*                with sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    endif.
+
+    me->fieldcat(
+      exporting
+        ls_structure = gs_outtab
+      changing
+        gt_fieldcat  = lt_fcat
+    ) .
+
+*   Layout de sáida do ALV
+    ls_layout-grid_title = 'Material' .
+    ls_layout-sel_mode   = 'A'.
+    ls_layout-cwidth_opt = 'X'.   " optimize column width
+    ls_layout-stylefname = 'STYLE'.
+    ls_layout-zebra      = abap_true.
+    ls_vari-report = sy-repid.
+
+*   Ordenação de saída
+    ls_sort-spos      = 1.
+    ls_sort-fieldname = 'MAKTX'.
+    ls_sort-up        = abap_true.
+    ls_sort-subtot    = abap_false.
+    append ls_sort to lt_sort.
+
+    call method lo_grid->set_table_for_first_display
+      exporting
+        is_layout                     = ls_layout
+        i_save                        = 'A'
+        is_variant                    = ls_vari
+      changing
+        it_outtab                     = gt_outtab
+        it_sort                       = lt_sort
+        it_fieldcatalog               = lt_fcat
+      exceptions
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        others                        = 4.
+
+*   Eventos
+    set handler handler_hotspot_click for lo_grid.
+    set handler handler_user_command  for lo_grid.
+    set handler handler_toolbar       for lo_grid.
+
+    lo_grid->refresh_table_display( ).
+
+*   Exibir relatório na tela default do report
+    call_screen_default( ).
+
+  endmethod.                    "generate_grid
+```
 ### protected section ###
 Métodos da sessão protegida.
 
