@@ -1,8 +1,8 @@
 # Relatório ALV CL_GUI_ALV_GRID #
 
 [![N|Solid](https://wiki.scn.sap.com/wiki/download/attachments/1710/ABAP%20Development.png?version=1&modificationDate=1446673897000&api=v2)](https://www.sap.com/brazil/developer.html)
-
 Existem varios exemplos e modelos diferente de usar a classe `CL_GUI_ALV_GRID` para exibir relatórios ALV. Sempre que a classe é utilizada, ela necessita de um `container` para que o ALV seja exibido. Ao inves de criar um container pra isso, eu preferi utilizar o próprio `container`, que é gerado quando se cria a tela `1000` em um relatório, que no caso, é a tela de seleção. Sim, eu ~~posso~~ vou utilizar o container na tela de seleção para exibir o ALV como eu aprendi com [Gerson Lívio](mailto:gerson@litsolutions.com.br).
+A funcionalidade de `SELECT ROWS`
 
 Para isso eu criei uma classe local basica `GCL_REPORT` com os seguintes métodos:
 
@@ -30,15 +30,16 @@ Para que fique melhor o entendimento, optei por colocar menos informações e ma
 ### public section ###
 Métodos da sessão publica.
 #### search ####
+Este tem como objetivo buscar no banco de dados as informações para que sejam exibidas no relatório.
 ```abap
-  method search .
+method search .
 
-    if s_matnr[] is not initial .
+    if lines( matnr ) gt 0 .
 
       select matnr maktx
-      into table gt_outtab
-      from makt
-      where matnr in s_matnr .
+        into table gt_outtab
+        from makt
+       where matnr in matnr .
 
     endif.
 
