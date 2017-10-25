@@ -138,10 +138,68 @@ Apos a busca dos dados, nesta rotina será feita a criação do objeto `lo_grid`
   endmethod.                    "generate_grid
 ```
 ### protected section ###
-Métodos da sessão protegida.
+Não foram implementados métodos para essa sessão.
 
 ### public private ###
-Métodos da sessão privada.
+#### fieldcat ####
+Esse rotina é excelente para que seja criado o `fieldcat`. Eu julgo muito maçante e improdutivo a criação sendo feita de forma que sejam informados todos os campos da estrutura de saída. Desta forma que foi implementado, utiliza-se o método `describe_by_data` da classe standard `cl_abap_structdescr`, desde forma, o objeto retornado (no caso `lobj_stdesc`) tem acesso a todas as caracteristicas do campo e pode utilizar estas informações para que seja feita a criação do `fieldcat` de forma mais produtiva.
+```abap
+  method fieldcat .
+
+    data: 
+      ls_fieldcat type line of lvc_t_fcat,
+      lobj_stdesc type ref to  cl_abap_structdescr,
+      lt_fields   type         cl_abap_structdescr=>included_view,
+      ls_fields   type line of cl_abap_structdescr=>included_view,
+      ls_desc     type x030l .
+
+
+    field-symbols:
+      <fs_fieldcat> like line of gt_fieldcat .
+    
+    refresh:
+      gt_fieldcat .
+
+*   Determine structure descriptor
+    try.
+        lobj_stdesc ?= cl_abap_structdescr=>describe_by_data( ls_structure ).
+      catch cx_root.
+*       raise no_field_catalog.
+    endtry.
+
+*   if it is ddic structure, determine field catalog using alv fm
+    if lobj_stdesc->is_ddic_type( ) is not initial.
+    endif.
+
+*   get structure fields
+    lt_fields = lobj_stdesc->get_included_view( ).
+
+*   build field catalog
+    loop at lt_fields into ls_fields.
+
+      ls_fieldcat-col_pos   = sy-tabix.
+      ls_fieldcat-fieldname = ls_fields-name.
+      if ls_fields-type->is_ddic_type( ) is not initial.
+        ls_desc              = ls_fields-type->get_ddic_header( ).
+        ls_fieldcat-rollname = ls_desc-tabname.
+      else.
+        ls_fieldcat-inttype  = ls_fields-type->type_kind.
+        ls_fieldcat-intlen   = ls_fields-type->length.
+*       ls_fieldcat-decimals = ls_fields-type->decimals.
+      endif.
+
+      if ls_fieldcat-fieldname eq 'MARK' .
+        ls_fieldcat-mark = abap_on .
+      endif .
+
+      append ls_fieldcat to gt_fieldcat .
+      clear: ls_fieldcat, ls_desc .
+      
+    endloop.
+
+  endmethod .                    "fieldcat
+
+```
 
 
 :+1:
