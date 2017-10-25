@@ -46,7 +46,7 @@ method search .
   endmethod .                    "search
 ```
 #### generate_grid ####
-Apos a busca dos dados, nesta rotina será feita a criação do objeto `lo_grid` da classe `cl_gui_alv_grid`, a composição ~~estática~~ dinâmica do `fieldcat`, configuração de layout de saída, ordenção de campos, atribuição de eventos e **utilização do mesmo `container`** para exibição do relatório. As chamadas de métodos `private` serão exemplificadas na respectiva sessão.
+Apos a busca dos dados, nesta rotina será feita a criação do objeto `lo_grid` da classe `cl_gui_alv_grid`, a composição ~~estática~~ dinâmica do `fieldcat`, configuração de layout de saída, ordenção de campos, atribuição de eventos e **utilização do mesmo** `container` para exibição do relatório. As chamadas de métodos `private` serão exemplificadas na respectiva sessão.
 ```abap 
   method generate_grid .
 
