@@ -142,7 +142,7 @@ Não foram implementados métodos para essa sessão.
 
 ### public private ###
 #### fieldcat ####
-Essa rotina é excelente para que seja criado o `fieldcat`. Eu julgo muito maçante e improdutivo a criação sendo feita de forma que sejam informados todos os campos da estrutura de saída. Desta forma que foi implementado, utiliza-se o método `describe_by_data` da classe standard `cl_abap_structdescr`, desde forma, o objeto retornado (no caso `lobj_stdesc`) tem acesso a todas as características do campo e pode utilizar estas informações para que seja feita a criação do `fieldcat` de forma mais produtiva.
+Essa rotina é excelente para criação do `fieldcat`. Eu julgo muito maçante e improdutivo a criação sendo feita de forma que sejam informados todos os campos da estrutura de saída. Desta forma que foi implementado, utiliza-se o método `describe_by_data` da classe standard `cl_abap_structdescr`, desde forma, o objeto retornado (no caso `lobj_stdesc`) tem acesso a todas as características do campo e pode utilizar estas informações para que seja feita a criação do `fieldcat` de forma mais produtiva.
 ```abap
   method fieldcat .
 
