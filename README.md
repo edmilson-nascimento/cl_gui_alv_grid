@@ -7,22 +7,22 @@ A funcionalidade de `SELECT ROWS`
 Para isso eu criei uma classe local básica `GCL_REPORT` com os seguintes métodos:
 
 * public section
-	* search
-	* generate_grid
-	* public section
-	* search
-	* generate_grid
+	* [search](#search)
+	* [generate_grid](#generate_grid)
+	* [public section](#generate_grid)
+	* [search](#generate_grid)
+	* [generate_grid](#generate_grid)
 
 * protected
 
 * private section
 	* [fieldcat](#fieldcat)
-	* call_screen_default
-	* handler_toolbar
-	* handler_user_command
-	* handler_hotspot_click
-	* executa_on_off
-	* refresh
+	* [call_screen_default](#call_screen_default)
+	* [handler_toolbar](#handler_toolbar)
+	* [handler_user_command](#handler_toolbar)
+	* [handler_hotspot_click](#handler_toolbar)
+	* [executa_on_off](#executa_on_off)
+	* [refresh](#refresh)
 
 ## Informações exibidas ##
 Para que fique melhor o entendimento, optei por colocar menos informações e mais funcionalidades. A tabela `MAKT - Textos breves de material` foi escolhida apenas por ser relacionada ao modulo que eu tratava quando desenvolvi a solução.
@@ -126,9 +126,9 @@ Apos a busca dos dados, nesta rotina será feita a criação do objeto `lo_grid`
         others                        = 4.
 
 *   Eventos
-    set handler handler_hotspot_click for lo_grid.
-    set handler handler_user_command  for lo_grid.
-    set handler handler_toolbar       for lo_grid.
+    set handler me->handler_hotspot_click for lo_grid.
+    set handler me->handler_user_command  for lo_grid.
+    set handler me->handler_toolbar       for lo_grid.
 
     lo_grid->refresh_table_display( ).
 
