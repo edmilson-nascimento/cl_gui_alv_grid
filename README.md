@@ -230,7 +230,108 @@ Esse método é importante para o aproveitamento de tela. Caso não fosse esse i
 
   endmethod.                    "call_screen_default
 ```
-#### call_screen_default ####
+#### handler_toolbar ####
+Neste método, são informados os novos botões/funcionalidade que o relatório irá contemplar. No caso, ele terá um botão _on/off_ (conforme imagem abaixo) para fazer uma ação que depois pode ser alterada conforme a necessidade. Para ficar mais organizado, achei melhor colocar uma divisória entre os botões standard e o que eu adicionei.
+[![N|Solid](https://uploaddeimagens.com.br/images/001/149/485/original/2017-10-26_091903.png)](#)
+```abap
+  method handler_toolbar.
 
+    data:  ls_tool_stru  type stb_button,
+          lt_tool_stru  type ttb_button.
+
+    ls_tool_stru-butn_type  = cntb_btype_sep .
+    append ls_tool_stru to lt_tool_stru .
+    clear ls_tool_stru .
+
+    ls_tool_stru-function   = 'PROC' .
+    ls_tool_stru-text       = 'On/Off' .
+    ls_tool_stru-quickinfo  = 'Liga / Desliga' .
+    ls_tool_stru-icon       = icon_oo_overwrite .
+    append ls_tool_stru to lt_tool_stru .
+    clear ls_tool_stru .
+
+    append lines of lt_tool_stru to e_object->mt_toolbar.
+
+  endmethod.                    "handler_toolbar
+  ```
+#### handler_user_command ####
+Este método recupera a execução após o relatório ser gerado. Trata os botões que são adicionados para novas funcionalidades.
+```abap
+  method: handler_user_command.
+
+    case e_ucomm.
+
+      when 'PROC'.
+        executa_on_off( ) .
+
+    endcase.
+
+  endmethod.                    "handler_user_command
+  ```
+  #### handler_hotspot_click ####
+Usado para facilitar a interpretação das informações, direcionando para transação de exibição.
+```abap
+  method handler_hotspot_click.
+
+    data: ls_outtab like line of gt_outtab .
+
+    case e_column_id.
+      when 'MATNR'.
+        read table gt_outtab into ls_outtab
+        index e_row_id-index.
+        if sy-subrc eq 0 .
+          set parameter id 'MAT'  field  ls_outtab-matnr .
+          call transaction 'MM03' and skip first screen .
+        endif.
+    endcase.
+
+  endmethod.                    "HANDLER_HOTSPOT_CLICK
+  ```
+#### executa_on_off ####
+Um exemplo criado para que seja feita alguma alteração nas informações ao clicar no botão. Desta forma, o botão que é exibido é alterado a cada vez que é clicado o botão que foi adicionado. Claro que essa ação é um exemplo e pode ser adequada de acordo com o cenário.
+```abap
+  method executa_on_off .
+
+    data:
+      lt_index_rows	type lvc_t_row,
+      ls_index_rows type lvc_s_row,
+      lt_row_no	    type lvc_t_roid.
+
+    field-symbols:
+      <fs_outtab> like line of gt_outtab .
+
+    call method lo_grid->get_selected_rows
+      IMPORTING
+        et_index_rows = lt_index_rows
+        et_row_no     = lt_row_no.
+
+    loop at lt_index_rows into ls_index_rows .
+      read table gt_outtab assigning <fs_outtab>
+      index ls_index_rows-index .
+      if sy-subrc eq 0 .
+        if <fs_outtab>-icon eq '@S_POSI@' .
+          <fs_outtab>-icon = '@S_NEGA@' .
+        else.
+          <fs_outtab>-icon = '@S_POSI@' .
+        endif .
+      endif .
+    endloop .
+
+    me->refresh( ) .
+
+  endmethod .                    "executa_on_off
+```
+#### refresh ####
+Atualizar as informações de exibição do ALV.
+```abap
+  method refresh .
+
+    call method lo_grid->refresh_table_display .
+    call method cl_gui_cfw=>flush.
+
+  endmethod .                    "refresh
+```
+
+Desta forma, tem-se o relatório ALV usando um mesmo `container` e sem a necessidade de criação de novas telas.
 :+1:
 
