@@ -1,4 +1,4 @@
-report yteste .
+report z_cl_gui_alv_grid .
 
 *--------------------------------------------------------------------*
 * Tipos
@@ -50,18 +50,18 @@ class gcl_report definition.
 
     methods call_screen_default .
 
-    class-methods handler_toolbar
+    methods handler_toolbar
       for event toolbar of cl_gui_alv_grid
       importing
         e_object e_interactive .
 
-    class-methods handler_user_command
+    methods handler_user_command
       for event
         !user_command of cl_gui_alv_grid
       importing
         !e_ucomm .
 
-    class-methods handler_hotspot_click
+    methods handler_hotspot_click
       for event
         !hotspot_click of cl_gui_alv_grid
       importing
@@ -69,9 +69,9 @@ class gcl_report definition.
         !e_column_id
         !es_row_no .
 
-    class-methods executa_on_off .
+    methods executa_on_off .
 
-    class-methods refresh .
+    methods refresh .
 
 endclass.                    "gcl_report DEFINITION
 
@@ -200,9 +200,9 @@ class gcl_report implementation.
         others                        = 4.
 
 *   Eventos
-    set handler handler_hotspot_click for lo_grid.
-    set handler handler_user_command  for lo_grid.
-    set handler handler_toolbar       for lo_grid.
+    set handler me->handler_hotspot_click for lo_grid.
+    set handler me->handler_user_command  for lo_grid.
+    set handler me->handler_toolbar       for lo_grid.
 
     lo_grid->refresh_table_display( ).
 
@@ -314,7 +314,7 @@ class gcl_report implementation.
     case e_ucomm.
 
       when 'PROC'.
-        executa_on_off( ) .
+        me->executa_on_off( ) .
 
     endcase.
 
@@ -343,11 +343,13 @@ class gcl_report implementation.
 
   method executa_on_off .
 
-    data: lt_index_rows	type lvc_t_row,
-          ls_index_rows type lvc_s_row,
-          lt_row_no	    type lvc_t_roid.
+    data:
+      lt_index_rows	type lvc_t_row,
+      ls_index_rows type lvc_s_row,
+      lt_row_no	    type lvc_t_roid.
 
-    field-symbols <fs_outtab> like line of gt_outtab .
+    field-symbols:
+      <fs_outtab> like line of gt_outtab .
 
     call method lo_grid->get_selected_rows
       IMPORTING
@@ -366,7 +368,7 @@ class gcl_report implementation.
       endif .
     endloop .
 
-    refresh( ) .
+    me->refresh( ) .
 
   endmethod .                    "executa_on_off
 
