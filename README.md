@@ -9,9 +9,6 @@ Para isso eu criei uma classe local básica `GCL_REPORT` com os seguintes métod
 * public section
 	* [search](#search)
 	* [generate_grid](#generate_grid)
-	* [public section](#generate_grid)
-	* [search](#generate_grid)
-	* [generate_grid](#generate_grid)
 
 * protected
 
