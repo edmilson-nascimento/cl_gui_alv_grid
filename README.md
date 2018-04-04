@@ -198,7 +198,7 @@ Essa rotina é excelente para criação do `fieldcat`. Eu julgo muito maçante e
 
 ```
 #### call_screen_default ####
-Esse método é importante para o aproveitamento de tela. Caso não fosse esse implementação, teria que ser criada uma nova tela com um `container`(que é a premissa para o uso do `CL_GUI_ALV_GRID`. Isso é feito na instrução `call selection-screen 1000`. Alem da seleção da tela, tambem é feita a exclusão de botões que aparecem na tela de seleção, visto que alguns botões não tem utilidade depois do relatório gerado.
+Esse método é importante para o aproveitamento de tela. Caso não fosse esse implementação, teria que ser criada uma nova tela com um `container`(que é a premissa para o uso do `CL_GUI_ALV_GRID`). Isso é feito na instrução `call selection-screen 1000`. Alem da seleção da tela, tambem é feita a exclusão de botões que aparecem na tela de seleção, visto que alguns botões não tem utilidade depois do relatório gerado.
 
 ```abap
   method call_screen_default.
