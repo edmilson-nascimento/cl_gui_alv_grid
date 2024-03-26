@@ -330,4 +330,3 @@ Atualizar as informações de exibição do ALV.
 
 Desta forma, tem-se o relatório ALV usando um mesmo `container` e sem a necessidade de criação de novas telas.
 :+1:
-
